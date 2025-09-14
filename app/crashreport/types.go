@@ -117,4 +117,5 @@ type Report struct {
 	Fork              bool
 	Modified          bool
 	Viewed            bool
+	JITMode           *int `db:"jitMode"`
 }

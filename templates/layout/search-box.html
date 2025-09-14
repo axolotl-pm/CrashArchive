@@ -43,10 +43,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col s12">
+        <div class="col s12 m6 l3">
             <label>
                 <input type="checkbox" name="duplicates" class="filled-in" value="true" {{ if .Search.Duplicates }} checked {{ end }}>
                 <span>Show duplicates</span>
+            </label>
+	</div>
+	<div class="col s12 m6 l3">
+            <label>
+                <input type="checkbox" name="jitonly" class="filled-in" value="true" {{ if .Search.JITOnly }} checked {{ end }}>
+                <span>Only show JIT crashes</span>
             </label>
         </div>
     </div>

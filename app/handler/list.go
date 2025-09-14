@@ -158,6 +158,11 @@ func buildSearchQuery(params url.Values) (string, []interface{}, *template.Searc
 		}
 	}
 
+	if jit := params.Get("jitonly"); jit == "true" {
+		filters = append(filters, "jitMode > 0")
+		searchBoxParams.JITOnly = true
+	}
+
 	filter = strings.Join(filters[:], " AND ")
 	if filter != "" {
 		filter = "WHERE " + filter

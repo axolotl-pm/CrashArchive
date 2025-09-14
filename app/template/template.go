@@ -91,6 +91,7 @@ type SearchBoxParams struct {
 	Duplicates bool
 	Forks bool
 	Modified bool
+	JITOnly bool
 }
 
 func ExecuteListTemplate(w http.ResponseWriter, r *http.Request, reports []crashreport.Report, url string, id int, start int, total int, searchBoxParams *SearchBoxParams, knownVersions []string) error {

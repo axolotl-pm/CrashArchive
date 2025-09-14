@@ -20,6 +20,7 @@ CREATE TABLE crash_reports (
       fork BOOL,
       modified BOOL,
       viewed BOOL,
+      jitMode INT DEFAULT NULL,
       PRIMARY KEY (id),
       INDEX(plugin(10)),
       INDEX(message(32)),
