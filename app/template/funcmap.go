@@ -22,6 +22,7 @@ var funcMap = template.FuncMap{
 	"shorthash": shorthash,
 	"pagenum":   pagenum,
 	"add":       add,
+	"sub":       sub,
 	"pluginInvolvementToString": pluginInvolvementToString,
 	"isDirectPluginCrash": isDirectPluginCrash,
 	"isIndirectPluginCrash": isIndirectPluginCrash,
@@ -94,6 +95,10 @@ func pagenum(base string, page int) string {
 
 func add(num1 int, num2 int) int {
 	return num1 + num2
+}
+
+func sub(num1 int, num2 int) int {
+	return num1 - num2
 }
 
 func pluginInvolvementToString (ctype string) string {

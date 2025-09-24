@@ -150,8 +150,21 @@
                         </table>
                         <div class="card-panel grey lighten-2">
                             {{ $code := sortcode .Report.Data.Code }}
-                            <pre class="code-line-numbers">{{ range $linenum, $_ := $code.Lines }}{{add $linenum $code.StartLine}}<br>{{end}}</pre>
-                            <pre style="overflow: auto; word-wrap: normal; white-space: pre;"><code>{{range $_, $line := $code.Lines}}{{$line}}<br>{{end}}</code></pre>
+                            {{ $errorline := sub .Report.Error.Line $code.StartLine }}
+                            <pre class="code-line-numbers">
+                                {{- range $linenum, $_ := $code.Lines -}}
+                                    {{- add $linenum $code.StartLine -}}
+				    <br>
+                                {{- end -}}
+                            </pre>
+                            <pre style="overflow: auto; word-wrap: normal; white-space: pre;"><code>
+                                {{- range $linenum, $line := $code.Lines -}}
+                                    {{ if eq $linenum $errorline }}<span style="text-decoration: underline wavy 0px red;">{{end}}
+                                    {{- $line -}}
+                                    {{ if eq $linenum $errorline }}</span>{{end -}}
+				    <br>
+                                {{- end -}}
+                            </code></pre>
                         </div>
                         <div class="card-panel grey lighten-2"><pre style="overflow: auto; word-wrap: normal; white-space: pre;"><code>{{range .Report.Data.Trace}}{{.}}<br/>{{end}}</code></pre></div>
                     </div>
