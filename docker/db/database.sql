@@ -1,5 +1,4 @@
 SET GLOBAL INNODB_FILE_PER_TABLE=1;
-SET GLOBAL INNODB_FILE_FORMAT=Barracuda;
 
 CREATE TABLE crash_reports (
       id INT NOT NULL AUTO_INCREMENT,
@@ -25,8 +24,8 @@ CREATE TABLE crash_reports (
       INDEX(plugin(10)),
       INDEX(message(32)),
       INDEX(file(32)),
-      INDEX(version)
-      INDEX bool_filters (duplicate, fork, modified),
+      INDEX(version),
+      INDEX bool_filters (duplicate, fork, modified)
 ) ENGINE=InnoDB;
 
 CREATE TABLE crash_report_blobs (

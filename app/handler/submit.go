@@ -2,8 +2,8 @@ package handler
 
 import (
 	"crypto/rand"
-	"encoding/json"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -14,8 +14,8 @@ import (
 
 	"github.com/pmmp/CrashArchive/app"
 	"github.com/pmmp/CrashArchive/app/crashreport"
-	"github.com/pmmp/CrashArchive/app/template"
 	"github.com/pmmp/CrashArchive/app/database"
+	"github.com/pmmp/CrashArchive/app/template"
 	"github.com/pmmp/CrashArchive/app/webhook"
 )
 
@@ -26,7 +26,7 @@ func SubmitGet(w http.ResponseWriter, r *http.Request) {
 func SubmitPost(db *database.DB, wh *webhook.Webhook, config *app.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if _, banned := config.IpBanlistMap[r.RemoteAddr]; banned {
-			log.Printf("rejected submission from banned IP: %s\n", r.RemoteAddr);
+			log.Printf("rejected submission from banned IP: %s\n", r.RemoteAddr)
 			sendError(w, r, "", http.StatusTeapot, true)
 			return
 		}
@@ -84,9 +84,9 @@ func SubmitPost(db *database.DB, wh *webhook.Webhook, config *app.Config) http.H
 			}
 		}
 
-		for _, pattern := range(config.CompiledErrorBlacklistPatterns) {
+		for _, pattern := range config.CompiledErrorBlacklistPatterns {
 			if pattern.MatchString(report.Data.Error.Message) {
-				log.Printf("blacklisted error pattern match in report from: %s", "", r.RemoteAddr)
+				log.Printf("blacklisted error pattern match in report from: %s", r.RemoteAddr)
 				sendError(w, r, "This crashdump is blacklisted because it may contain sensitive information", http.StatusUnprocessableEntity, isAPI)
 				return
 			}
@@ -107,10 +107,12 @@ func SubmitPost(db *database.DB, wh *webhook.Webhook, config *app.Config) http.H
 			log.Printf("invalid git hash %s in report from: %s\n", report.Data.General.GIT, r.RemoteAddr)
 			report.Modified = true
 		}
-		if report.Data.General.Name != "PocketMine-MP" {
-			log.Printf("fork %s detected in report from: %s\n", report.Data.General.Name, r.RemoteAddr)
-			report.Fork = true
-		}
+		// Axolotl-PM Start: Remove fork detector
+		//if report.Data.General.Name != "PocketMine-MP" {
+		//	log.Printf("fork %s detected in report from: %s\n", report.Data.General.Name, r.RemoteAddr)
+		//	report.Fork = true
+		//}
+		// Axolotl-PM End: Remove fork detector
 
 		name := r.FormValue("name")
 		email := r.FormValue("email")
@@ -131,7 +133,7 @@ func SubmitPost(db *database.DB, wh *webhook.Webhook, config *app.Config) http.H
 			if !report.Duplicate {
 				go wh.Post(webhook.ReportListEntry{
 					ReportId: uint64(id),
-					Message: report.Error.Message,
+					Message:  report.Error.Message,
 				})
 			} else {
 				wh.BumpDupeCounter()

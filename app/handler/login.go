@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"net/url"
 	"github.com/pmmp/CrashArchive/app"
 	"github.com/pmmp/CrashArchive/app/database"
 	"github.com/pmmp/CrashArchive/app/template"
 	"github.com/pmmp/CrashArchive/app/user"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 )
 
 func isAlreadyLoggedIn(w http.ResponseWriter, r *http.Request) bool {
@@ -27,9 +27,9 @@ func isAlreadyLoggedIn(w http.ResponseWriter, r *http.Request) bool {
 
 type githubAccessInfo struct {
 	AccessToken           string `json:"access_token"`
-	ExpiresIn             int `json:"expires_in"`
+	ExpiresIn             int    `json:"expires_in"`
 	RefreshToken          string `json:"refresh_token"`
-	RefreshTokenExpiresIn int `json:"refresh_token_expires_in"`
+	RefreshTokenExpiresIn int    `json:"refresh_token_expires_in"`
 	TokenType             string `json:"token_type"`
 }
 
@@ -134,7 +134,7 @@ func LoginGetGithubCallback(githubAppConfig *app.GitHubAuthConfig) http.HandlerF
 
 			exchangeParams := url.Values{}
 			exchangeParams.Add("code", codeParam)
-			exchangeParams.Add("client_id",  githubAppConfig.ClientId)
+			exchangeParams.Add("client_id", githubAppConfig.ClientId)
 			exchangeParams.Add("client_secret", githubAppConfig.ClientSecret)
 
 			githubAccessToken, err := url.Parse("https://github.com/login/oauth/access_token")
@@ -147,7 +147,7 @@ func LoginGetGithubCallback(githubAppConfig *app.GitHubAuthConfig) http.HandlerF
 
 			request, err := http.NewRequest("POST", githubAccessToken.String(), bytes.NewBuffer(emptyBody))
 			if err != nil {
-				log.Println("Request creation error: %v", err)
+				log.Printf("Request creation error: %v", err)
 				return
 			}
 
@@ -183,7 +183,7 @@ func LoginGetGithubCallback(githubAppConfig *app.GitHubAuthConfig) http.HandlerF
 			if isAdmin {
 				log.Printf("GitHub user %s is an administrator :)", username)
 				completeAuthentication(w, r, user.UserInfo{
-					Name: username,
+					Name:       username,
 					Permission: user.Admin,
 				}, redirectUrl)
 			} else {
@@ -192,13 +192,13 @@ func LoginGetGithubCallback(githubAppConfig *app.GitHubAuthConfig) http.HandlerF
 				return
 			}
 		} else {
-			log.Println("Weird GitHub callback query: %s", r.URL.String())
+			log.Printf("Weird GitHub callback query: %s", r.URL.String())
 		}
 	}
 }
 
 func LoginGetUserPassword(w http.ResponseWriter, r *http.Request) {
-	if(!isAlreadyLoggedIn(w, r)){
+	if !isAlreadyLoggedIn(w, r) {
 		template.ExecuteTemplate(w, r, "login")
 	}
 }
@@ -206,7 +206,7 @@ func LoginGetUserPassword(w http.ResponseWriter, r *http.Request) {
 func LoginPostUserPassword(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
-			log.Println("bad login post from %s: %v", r.RemoteAddr, err)
+			log.Printf("bad login post from %s: %v", r.RemoteAddr, err)
 			template.ErrorTemplate(w, r, "", http.StatusBadRequest)
 			return
 		}
@@ -221,7 +221,7 @@ func LoginPostUserPassword(db *database.DB) http.HandlerFunc {
 		userInfo, err := db.AuthenticateUser(username, []byte(password))
 		//TODO: check the type of error (unknown user, wrong password, etc)
 		if err != nil {
-			log.Println("%v", err)
+			log.Printf("%v", err)
 			template.ErrorTemplate(w, r, "Failed to login", http.StatusUnauthorized)
 			return
 		}

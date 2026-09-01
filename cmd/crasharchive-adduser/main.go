@@ -11,8 +11,6 @@ import (
 	"github.com/pmmp/CrashArchive/app/user"
 )
 
-const dbRetry = 5
-
 func main() {
 	log.SetFlags(log.Lshortfile)
 
@@ -32,28 +30,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	var retry int
-	var db *database.DB = nil
-loop:
-	for {
-		if retry == dbRetry {
-			log.Println("could not connect to database")
-			os.Exit(1)
-		}
-
-		db, err = database.New(config.Database)
-		if err == nil {
-			if err := db.Ping(); err != nil {
-				log.Println(err)
-				os.Exit(1)
-			}
-			break loop
-		} else {
-			log.Println(err)
-		}
-		log.Printf("unable to connect to database: sleeping...\n")
-		time.Sleep(5 * time.Second)
-		retry++
+	db, err := database.Connect(config.Database, 5*time.Second)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
 	}
 
 	db.AddUser(*username, []byte(*password), user.Admin)

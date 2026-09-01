@@ -1,10 +1,12 @@
-FROM golang:1.23-bullseye as build
+FROM --platform=$BUILDPLATFORM golang:1.27-trixie AS build
+ARG TARGETARCH
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH
 WORKDIR /go/crasharchive
 COPY . .
-RUN go build -o ./bin/crasharchive ./cmd/crasharchive.go
-RUN go build -o ./bin/crasharchive-adduser ./cmd/crasharchive-adduser.go
+RUN go build -o ./bin/crasharchive ./cmd/crasharchive
+RUN go build -o ./bin/crasharchive-adduser ./cmd/crasharchive-adduser
 
-FROM debian:8.8
+FROM debian:trixie-slim
 
 WORKDIR /app
 COPY --from=build /go/crasharchive/bin/* ./

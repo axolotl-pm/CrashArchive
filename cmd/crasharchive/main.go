@@ -17,8 +17,6 @@ import (
 	"github.com/pmmp/CrashArchive/app/webhook"
 )
 
-const dbRetry = 5
-
 func main() {
 	log.SetFlags(log.Lshortfile)
 
@@ -53,28 +51,10 @@ func main() {
 		wh = webhook.New(config.Domain, config.SlackURLs, config.SlackHookInterval)
 	}
 
-	var retry int
-	var db *database.DB = nil
-loop:
-	for {
-		if retry == dbRetry {
-			log.Println("could not connect to database")
-			os.Exit(1)
-		}
-
-		db, err = database.New(config.Database)
-		if err == nil {
-			if err := db.Ping(); err != nil {
-				log.Println(err)
-				os.Exit(1)
-			}
-			break loop
-		} else {
-			log.Println(err)
-		}
-		log.Printf("unable to connect to database: sleeping...\n")
-		time.Sleep(time.Second)
-		retry++
+	db, err := database.Connect(config.Database, time.Second)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
 	}
 	db.UpdateTables()
 

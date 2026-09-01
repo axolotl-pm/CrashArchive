@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
   db:
     build: ./docker/db/
@@ -8,6 +6,11 @@ services:
         MYSQL_DATABASE: crash_archive
     volumes:
         - ./volumes/mysql:/var/lib/mysql
+    healthcheck:
+        test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+        interval: 5s
+        timeout: 5s
+        retries: 30
   ca:
     build:
       dockerfile: ./docker/ca/Dockerfile
@@ -19,5 +22,8 @@ services:
         - ./config:/app/config
         - ./static:/app/static
         - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
+    depends_on:
+        db:
+            condition: service_healthy
     links:
         - db:db

@@ -20,6 +20,6 @@ make defaultconfig
 ```
 Tweak `docker-compose.yml` and `config.json` as you desire, and then run:
 ```sh
-make build/linux
-docker-compose up -d
+docker compose up -d --build
 ```
+The binaries are compiled inside the image, so no host Go toolchain is needed.

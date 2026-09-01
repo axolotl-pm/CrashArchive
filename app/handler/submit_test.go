@@ -30,7 +30,7 @@ func TestSubmitPost(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(SubmitPost(nil, nil))
+	handler := http.HandlerFunc(SubmitPost(nil, nil, nil))
 	handler.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
